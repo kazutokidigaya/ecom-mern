@@ -9,6 +9,7 @@ import cartRoutes from "./routes/cart.route.js";
 import couponRoutes from "./routes/coupon.route.js";
 import paymentRoutes from "./routes/payment.route.js";
 import analyticsRoutes from "./routes/analytics.route.js";
+import http from "http";
 
 import { connectDB } from "./lib/db.js";
 
@@ -37,7 +38,13 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(PORT, () => {
-  console.log("Server is running on http://localhost:" + PORT);
+const server = http.createServer(app);
+
+// Set longer timeouts for Render’s requirements
+server.keepAliveTimeout = 120 * 1000; // 120 seconds
+server.headersTimeout = 120 * 1000; // 120 seconds
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
   connectDB();
 });
